@@ -1,0 +1,6 @@
+Dear ${PERSON_NAME}, 
+
+PFA the Calendar for this week
+Have a great weekend! 
+
+Yours Truly
