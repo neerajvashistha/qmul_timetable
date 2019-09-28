@@ -8,8 +8,8 @@ from pyvirtualdisplay import Display
 display = Display(visible=0, size=(800, 600))
 display.start()
 
-#browser = webdriver.Firefox()
-browser = webdriver.Chrome(executable_path='/home/nv/Downloads/chromedriver_linux64/chromedriver')
+browser = webdriver.Firefox()
+#browser = webdriver.Chrome(executable_path='/home/nv/Downloads/chromedriver_linux64/chromedriver')
 browser.get('https://timetables.qmul.ac.uk')
 browser.implicitly_wait(30)
 python_button = browser.find_element_by_id('LinkBtn_modules') 
@@ -28,7 +28,7 @@ select.select_by_value('ECS7002P-A19')
 select.select_by_value('ECS766P-A19')
 select.select_by_value('ECS763P-A19')
 select.select_by_value('ECS708P-A19')
-
+select.select_by_value('ECS751P-C19')
 # dlType
 select = Select(browser.find_element_by_id('dlType'))
 
@@ -59,12 +59,14 @@ def next_weekday(weekday,d=datetime.datetime.today()):
 	dateValue = d + datetime.timedelta(days_ahead)
 	return dateValue.strftime("%m/%d/%Y")
 
-for i in range(1,21):	
+for i in range(1,25):	
 	day_value = ''.join([i.text_content() for i in doc.xpath('/html/body/p['+str(i)+']')])	
 	# /html/body/p[1] /html/body/table[2]
 	# /html/body/p[6] /html/body/table[9]
 	# /html/body/p[11] /html/body/table[16]
 	# /html/body/p[16] /html/body/table[23]
+	# /html/body/p[16] /html/body/table[23] 
+	# /html/body/p[21] /html/body/table[31] 
 	if i == 1:
 		table_val = 2
 	elif i == 6:
@@ -72,7 +74,9 @@ for i in range(1,21):
 	elif i == 11:
 		table_val = 16
 	elif i == 16:
-		table_val = 23	
+		table_val = 23
+	elif i == 21:
+		table_val = 31	
 	else:
 		pass
 	# print(day_value,next_weekday(day_value),str(i),str(table_val)) 
@@ -104,4 +108,4 @@ for index, row in df.iterrows():
 
 
 df2 = pd.DataFrame(rows,columns=columns)
-df2.to_csv('calendar.csv',index = False)
+df2.to_csv('calendar'+str(datetime.datetime.today().strftime("%d-%m-%Y"))+'.csv',index = False)
