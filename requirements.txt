@@ -1,4 +1,5 @@
 beautifulsoup4==4.8.0
+configparser==4.0.2
 EasyProcess==0.2.7
 lxml==4.4.1
 numpy==1.17.2

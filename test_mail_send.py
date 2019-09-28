@@ -1,10 +1,9 @@
+import configparser
+import datetime
 import smtplib
-
 from string import Template
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
 import smtplib
 from os.path import basename
 from email.mime.application import MIMEApplication
@@ -12,8 +11,15 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
-MY_ADDRESS = ''
-PASSWORD = ''
+
+
+config = configparser.ConfigParser()
+config.read("mail.conf")
+MY_ADDRESS = config.get('email', 'username')
+PASSWORD = config.get('email', 'password')
+hostname = config.get('email', 'host')
+
+calendar_file = 'calendar'+str(datetime.datetime.today().strftime("%d-%m-%Y"))+'.csv'
 
 def get_contacts(filename):
 	"""
@@ -44,7 +50,7 @@ def main():
 	message_template = read_template('message.txt')
 
 	# set up the SMTP server
-	s = smtplib.SMTP(host='smtp.office365.com', port=587)
+	s = smtplib.SMTP(host=hostname, port=587)
 	s.starttls()
 	s.login(MY_ADDRESS, PASSWORD)
 
@@ -66,7 +72,7 @@ def main():
 		# add in the message body
 		msg.attach(MIMEText(message, 'plain'))
 		
-		files = ['/home/nv/qmul_setup_caln/calendar.csv']
+		files = [calendar_file]
 		for f in files or []:
 			with open(f, "rb") as fil:
 				part = MIMEApplication(
